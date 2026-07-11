@@ -2,9 +2,16 @@
 name = "ricecomp"
 version = "0.5.0"
 edition = "2024"
+rust-version = "1.85"
+description = "Lossless Rice compression codec, a Rust port of CFITSIO's ricecomp.c"
 repository = "https://github.com/cruzzil/ricecomp.git"
-description = "Rice Compression Algorithm"
+homepage = "https://github.com/cruzzil/ricecomp"
+documentation = "https://docs.rs/ricecomp"
+readme = "README.md"
 license = "MIT"
+keywords = ["compression", "rice", "fits", "lossless", "astronomy"]
+categories = ["compression", "science", "encoding"]
+exclude = ["fuzz/", "c_example/", ".vscode/", ".github/"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 

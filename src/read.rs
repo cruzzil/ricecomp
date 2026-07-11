@@ -103,7 +103,7 @@ impl RCDecoder {
         /* first 4 bytes of input buffer contain the value of the first */
         /* 4 byte integer value, without any encoding */
 
-        if input.len() < 4  {
+        if input.len() < 4 {
             (self.log_fn)("decompression error: input buffer not properly allocated");
             return Err(DecodeError::NotProperlyAllocated);
         }
