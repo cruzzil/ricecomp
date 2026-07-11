@@ -1,6 +1,6 @@
 use std::{ffi::c_int, io::Write};
 
-use crate::{log_noop, EOF};
+use crate::{EOF, log_noop};
 
 #[derive(Debug)]
 pub enum EncodeError {

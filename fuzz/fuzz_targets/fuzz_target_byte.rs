@@ -1,9 +1,13 @@
 #![no_main]
 use libfuzzer_sys::fuzz_target;
 extern crate ricecomp;
-use crate::ricecomp::DataByte;
 use ricecomp::read::RCDecoder;
 use ricecomp::write::RCEncoder;
+
+#[derive(Clone, Debug, arbitrary::Arbitrary)]
+pub struct DataByte {
+    pub d: Vec<i8>,
+}
 
 fuzz_target!(|data: DataByte| {
     let l = data.d.len();
@@ -12,21 +16,21 @@ fuzz_target!(|data: DataByte| {
     let blocksz = 32;
 
 
-    let mut encoder = RCEncoder::new();
     let mut comp_array = Vec::new();
-    let out_count = encoder.encode_byte(&data.d, l, blocksz as usize, &mut comp_array);
+    let mut encoder = RCEncoder::new(&mut comp_array);
+    let out_count = encoder.encode_byte(&data.d, l, blocksz as usize);
 
     match out_count {
-        Ok(v) => {
+        Ok(_) => {
             let decoder = RCDecoder::new();
             let mut decomp_array = vec![0; l];
-            let result = decoder.decode_byte(&comp_array,l, blocksz as usize, &mut decomp_array).unwrap();
+            decoder.decode_byte(&comp_array, l, blocksz as usize, &mut decomp_array).unwrap();
             let decomp_array: Vec<i8> = decomp_array.iter().map(|&x| x as i8).collect();
 
             assert_eq!(data.d, decomp_array);
         },
 
-        Err(v) => {
+        Err(_) => {
 
         }
     }

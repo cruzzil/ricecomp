@@ -3,7 +3,7 @@ name = "ricecomp-fuzz"
 version = "0.0.0"
 authors = ["Automatically generated"]
 publish = false
-edition = "2018"
+edition = "2024"
 
 [profile.release]
 overflow-checks = false
@@ -12,8 +12,9 @@ overflow-checks = false
 cargo-fuzz = true
 
 [dependencies]
-libfuzzer-sys = "0.4"
-ricecomp = { path = "..", features = ["arbitrary"] }
+libfuzzer-sys = "*"
+arbitrary = { version = "1", features = ["derive"] }
+ricecomp = { path = ".." }
 
 # Prevent this from interfering with workspaces
 [workspace]

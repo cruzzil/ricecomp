@@ -7,24 +7,6 @@ pub mod write;
 
 const EOF: i32 = -1;
 
-#[derive(Clone, Debug)]
-#[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
-pub struct DataInt {
-    pub d: Vec<i32>,
-}
-
-#[derive(Clone, Debug)]
-#[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
-pub struct DataShort {
-    pub d: Vec<i16>,
-}
-
-#[derive(Clone, Debug)]
-#[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
-pub struct DataByte {
-    pub d: Vec<i8>,
-}
-
 #[cfg(test)]
 mod tests {
     use std::vec;

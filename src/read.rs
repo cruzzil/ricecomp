@@ -22,6 +22,20 @@ pub enum DecodeError {
     NotProperlyAllocated,
 }
 
+/// Read the byte at index `c`, returning [`DecodeError::EndOfBuffer`] instead of
+/// panicking when the compressed stream is truncated. The original C decoder
+/// relied on the compressed buffer being over-allocated and only checked the
+/// `c > clen` boundary once per block; with Rust slices an out-of-range index
+/// panics (and a run-of-zeros loop could spin forever), so every streaming read
+/// is bounds-checked here.
+#[inline]
+fn next_byte(input: &[u8], c: usize) -> Result<u8, DecodeError> {
+    match input.get(c) {
+        Some(&v) => Ok(v),
+        None => Err(DecodeError::EndOfBuffer),
+    }
+}
+
 pub struct RCDecoder {
     log_fn: fn(&str),
 }
@@ -89,7 +103,7 @@ impl RCDecoder {
         /* first 4 bytes of input buffer contain the value of the first */
         /* 4 byte integer value, without any encoding */
 
-        if (input.len() < 4) {
+        if input.len() < 4  {
             (self.log_fn)("decompression error: input buffer not properly allocated");
             return Err(DecodeError::NotProperlyAllocated);
         }
@@ -108,7 +122,7 @@ impl RCDecoder {
 
         // cend = c + clen - 4;
 
-        let mut b: u32 = input[c_current] as u32; /* bit buffer			*/
+        let mut b: u32 = next_byte(input, c_current)? as u32; /* bit buffer			*/
         c_current += 1;
         let mut nbits: i32 = 8; /* number of bits remaining in b	*/
 
@@ -117,7 +131,7 @@ impl RCDecoder {
             /* get the FS value from first fsbits */
             nbits -= fsbits;
             while nbits < 0 {
-                b = (b << 8) | input[c_current] as u32;
+                b = (b << 8) | next_byte(input, c_current)? as u32;
                 c_current += 1;
                 nbits += 8;
             }
@@ -142,13 +156,13 @@ impl RCDecoder {
                     diff = b.wrapping_shl(k as u32);
                     k -= 8;
                     while k >= 0 {
-                        b = input[c_current] as u32;
+                        b = next_byte(input, c_current)? as u32;
                         c_current += 1;
                         diff |= b << k;
                         k -= 8
                     }
                     if nbits > 0 {
-                        b = input[c_current] as u32;
+                        b = next_byte(input, c_current)? as u32;
                         c_current += 1;
                         diff |= b >> (-k);
                         b &= (1 << nbits) - 1;
@@ -177,7 +191,7 @@ impl RCDecoder {
                     while b == 0 {
                         nbits += 8;
 
-                        b = input[c_current] as u32;
+                        b = next_byte(input, c_current)? as u32;
                         c_current += 1;
                     }
                     nzero = nbits - NONZERO_COUNT[b as usize];
@@ -187,7 +201,7 @@ impl RCDecoder {
                     /* get the FS trailing bits */
                     nbits -= fs;
                     while nbits < 0 {
-                        b = (b << 8) | (input[c_current] as u32);
+                        b = (b << 8) | (next_byte(input, c_current)? as u32);
 
                         c_current += 1;
                         nbits += 8;
@@ -276,7 +290,7 @@ impl RCDecoder {
 
         // cend = c + clen - 2;
 
-        let mut b: u32 = input[c_current] as u32; /* bit buffer			*/
+        let mut b: u32 = next_byte(input, c_current)? as u32; /* bit buffer			*/
         c_current += 1;
         let mut nbits: i32 = 8; /* number of bits remaining in b	*/
 
@@ -285,7 +299,7 @@ impl RCDecoder {
             /* get the FS value from first fsbits */
             nbits -= fsbits;
             while nbits < 0 {
-                b = (b << 8) | input[c_current] as u32;
+                b = (b << 8) | next_byte(input, c_current)? as u32;
                 c_current += 1;
                 nbits += 8;
             }
@@ -310,13 +324,13 @@ impl RCDecoder {
                     diff = b.wrapping_shl(k as u32);
                     k -= 8;
                     while k >= 0 {
-                        b = input[c_current] as u32;
+                        b = next_byte(input, c_current)? as u32;
                         c_current += 1;
                         diff |= b << k;
                         k -= 8
                     }
                     if nbits > 0 {
-                        b = input[c_current] as u32;
+                        b = next_byte(input, c_current)? as u32;
                         c_current += 1;
                         diff |= b >> (-k);
                         b &= (1 << nbits) - 1;
@@ -345,7 +359,7 @@ impl RCDecoder {
                     while b == 0 {
                         nbits += 8;
 
-                        b = input[c_current] as u32;
+                        b = next_byte(input, c_current)? as u32;
                         c_current += 1;
                     }
                     nzero = nbits - NONZERO_COUNT[b as usize];
@@ -355,7 +369,7 @@ impl RCDecoder {
                     /* get the FS trailing bits */
                     nbits -= fs;
                     while nbits < 0 {
-                        b = (b << 8) | (input[c_current] as u32);
+                        b = (b << 8) | (next_byte(input, c_current)? as u32);
 
                         c_current += 1;
                         nbits += 8;
@@ -440,7 +454,7 @@ impl RCDecoder {
 
         // cend = c + clen - 2;
 
-        let mut b: u32 = input[c_current] as u32; /* bit buffer			*/
+        let mut b: u32 = next_byte(input, c_current)? as u32; /* bit buffer			*/
         c_current += 1;
         let mut nbits: i32 = 8; /* number of bits remaining in b	*/
 
@@ -449,7 +463,7 @@ impl RCDecoder {
             /* get the FS value from first fsbits */
             nbits -= fsbits;
             while nbits < 0 {
-                b = (b << 8) | input[c_current] as u32;
+                b = (b << 8) | next_byte(input, c_current)? as u32;
                 c_current += 1;
                 nbits += 8;
             }
@@ -474,13 +488,13 @@ impl RCDecoder {
                     diff = b.wrapping_shl(k as u32);
                     k -= 8;
                     while k >= 0 {
-                        b = input[c_current] as u32;
+                        b = next_byte(input, c_current)? as u32;
                         c_current += 1;
                         diff |= b << k;
                         k -= 8
                     }
                     if nbits > 0 {
-                        b = input[c_current] as u32;
+                        b = next_byte(input, c_current)? as u32;
                         c_current += 1;
                         diff |= b >> (-k);
                         b &= (1 << nbits) - 1;
@@ -509,7 +523,7 @@ impl RCDecoder {
                     while b == 0 {
                         nbits += 8;
 
-                        b = input[c_current] as u32;
+                        b = next_byte(input, c_current)? as u32;
                         c_current += 1;
                     }
                     nzero = nbits - NONZERO_COUNT[b as usize];
@@ -519,7 +533,7 @@ impl RCDecoder {
                     /* get the FS trailing bits */
                     nbits -= fs;
                     while nbits < 0 {
-                        b = (b << 8) | (input[c_current] as u32);
+                        b = (b << 8) | (next_byte(input, c_current)? as u32);
 
                         c_current += 1;
                         nbits += 8;
