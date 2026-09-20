@@ -1,7 +1,7 @@
 [![Crates.io](https://img.shields.io/crates/v/ricecomp.svg)](https://crates.io/crates/ricecomp)
-[![Actions Status](https://github.com/cruzzil/ricecomp/workflows/CI/badge.svg)](https://github.com/cruzzil/ricecomp/actions)
+[![CI](https://github.com/cruzzil/ricecomp/actions/workflows/build.yml/badge.svg)](https://github.com/cruzzil/ricecomp/actions/workflows/build.yml)
 [![Documentation](https://docs.rs/ricecomp/badge.svg)](https://docs.rs/ricecomp/)
-[![codecov](https://codecov.io/gh/cruzzil/ricecomp/branch/master/graph/badge.svg?token=YZEX06JT7K)](https://codecov.io/gh/cruzzil/ricecomp)
+[![codecov](https://codecov.io/gh/cruzzil/ricecomp/graph/badge.svg?token=MMM1IHGUN5)](https://codecov.io/gh/cruzzil/ricecomp)
 [![Dependency status](https://deps.rs/repo/github/cruzzil/ricecomp/status.svg)](https://deps.rs/repo/github/cruzzil/ricecomp)
 
 # ricecomp
