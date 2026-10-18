@@ -1,5 +1,4 @@
 /target
-Cargo.lock
 *.log
 c_example/test
 /build
